@@ -30,22 +30,8 @@ class Mario {
     }
   }
 
-  moveRight() {
-    this.currentImg = "MarioRight";
-    this.x += this.xdir * 10;
-
-    // image animation
-
-    console.log(this.currentImg);
-  }
-
-  moveLeft() {
-    this.currentImg = "MarioLeft";
-    this.x += this.xdir * 10;
-
-    // image animation
-
-    console.log(this.currentImg);
+  move() {
+    this.x += this.xdir * 4;
   }
 
   setDir(dir) {

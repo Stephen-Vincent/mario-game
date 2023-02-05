@@ -5,10 +5,16 @@ let stage = 0; // keeps track of which functions should be run
 
 // Player
 let mario;
-let posX = 500; // p1 for player 1
-let posY = 600;
-let playerWidth = 30;
-let playerHeight = 70;
+let posX = 200; // p1 for player 1
+let posY = 560;
+
+// Gravity
+let isJumping = false;
+let direction = 1;
+let velocity = 2;
+let minHeight = 560;
+let jumpPower = 20;
+let fallingSpeed = 5;
 
 // boxes (platforms)
 let boxX = 200;
@@ -36,7 +42,7 @@ function setup() {
 
   mario = new Mario(
     posX,
-    posY - 40,
+    posY,
     MarioRight,
     MarioLeft,
     MarioStoodL,
@@ -79,21 +85,47 @@ function game() {
 
   // draw player
   mario.show();
+
+  // Player interactions
+  mario.move();
+  gravity();
 } // Close Game
+
+function gravity() {
+  if (mario.y >= minHeight && isJumping == false) {
+    mario.y = mario.y;
+  } // on ground.
+  else {
+    mario.y = mario.y + direction * velocity;
+  } // fall.
+
+  if (isJumping == true) {
+    velocity = -jumpPower;
+  } else {
+    velocity = fallingSpeed;
+  }
+}
 
 function keyPressed() {
   if (keyCode === RIGHT_ARROW) {
-    mario.setDir(2);
-    mario.moveRight();
+    mario.currentImg = "MarioRight";
+    mario.setDir(1);
   }
+
   if (keyCode === LEFT_ARROW) {
-    mario.setDir(-2);
-    mario.moveLeft();
+    mario.currentImg = "MarioLeft";
+    mario.setDir(-1);
+  }
+
+  if (keyCode === UP_ARROW) {
+    isJumping = true;
+    console.log("mario jumping");
   }
 }
 
 function keyReleased() {
   mario.setDir(0);
+  isJumping = false;
 
   if (mario.currentImg === "MarioLeft") {
     mario.currentImg = "MarioStoodL";
