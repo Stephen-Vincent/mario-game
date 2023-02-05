@@ -13,6 +13,7 @@ let posY = 560;
 // Gravity
 let isJumping = false;
 let isFalling = false;
+let isOnBox = false;
 let direction = 1;
 let velocity = 2;
 let minHeight = 560;
@@ -20,10 +21,13 @@ let jumpPower = 20;
 let fallingSpeed = 5;
 
 // boxes (platforms)
-let boxX = 200;
-let boxY = 300;
-let boxWidth = 200;
-let boxHeight = 40;
+
+let box = {
+  x: 200,
+  y: 400,
+  width: 200,
+  height: 50,
+};
 
 // --------- PRELOAD -------
 
@@ -75,24 +79,36 @@ function game() {
   fill(100, 200, 75); //green
   rect(width / 2, 650, width, 100);
 
+  // draw boxes
+  stroke(0);
+  strokeWeight(5);
+  fill(255, 120, 0); //dark orange
+  rect(box.x, box.y, box.width, box.height);
+
+  // draw player
+  mario.show();
+
+  //collisions
+
+  if (
+    mario.x >= box.x - box.width / 2 &&
+    mario.x <= box.x + box.width / 2 &&
+    mario.y >= box.y - box.height / 2 &&
+    mario.y <= box.y + box.height / 2
+  ) {
+    mario.y = mario.y;
+    velocity = 0;
+  }
+
+  // Player interactions
+  mario.move();
+  gravity();
+
   // window frame
   noFill();
   stroke(0);
   strokeWeight(15);
   rect(width / 2, height / 2, width, height);
-
-  // draw box
-  stroke(0);
-  strokeWeight(5);
-  fill(255, 120, 0); //dark orange
-  rect(boxX, boxY, boxWidth, boxHeight);
-
-  // draw player
-  mario.show();
-
-  // Player interactions
-  mario.move();
-  gravity();
 } // Close Game
 
 function gravity() {
@@ -126,8 +142,15 @@ function keyPressed() {
 
   if (kb.pressing("left")) {
     // console.log("left arrow pressed");
-    mario.currentImg = "MarioLeft";
-    mario.setDir(-1);
+
+    if (mario.x < 15) {
+      // stops mario from going to far to the left.
+      mario.currentImg = "MarioStoodL";
+      mario.setDir(0);
+    } else {
+      mario.currentImg = "MarioLeft";
+      mario.setDir(-1);
+    }
     if (isJumping || isFalling) {
       MarioLeft.pause(); // stops gif whilst in the air.
     } else {
@@ -135,9 +158,15 @@ function keyPressed() {
     }
   }
 
-  if (kb.pressing("space") && mario.y >= minHeight) {
+  if (kb.pressing("space")) {
     //stops double jumping
-    isJumping = true;
+    if (isOnBox) {
+      isJumping = false;
+    }
+
+    if (isOnBox == false && mario.y >= minHeight) {
+      isJumping = true;
+    }
   }
 
   if (kb.space >= 24) {
