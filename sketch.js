@@ -1,5 +1,7 @@
 // Global
 
+// p5.play must be enabled for this program to run.
+
 // Game Control
 let stage = 0; // keeps track of which functions should be run
 
@@ -10,6 +12,7 @@ let posY = 560;
 
 // Gravity
 let isJumping = false;
+let isFalling = false;
 let direction = 1;
 let velocity = 2;
 let minHeight = 560;
@@ -57,6 +60,7 @@ function draw() {
 
   if (stage == 0) {
     game();
+    keyPressed();
   }
 } // Close Draw
 
@@ -94,9 +98,11 @@ function game() {
 function gravity() {
   if (mario.y >= minHeight && isJumping == false) {
     mario.y = mario.y;
+    isFalling = false; //resets the value.
   } // on ground.
   else {
     mario.y = mario.y + direction * velocity;
+    isFalling = true; //stops gif when falling
   } // fall.
 
   if (isJumping == true) {
@@ -107,19 +113,36 @@ function gravity() {
 }
 
 function keyPressed() {
-  if (keyCode === RIGHT_ARROW) {
+  if (kb.pressing("right")) {
+    // console.log("Right arrow pressed");
     mario.currentImg = "MarioRight";
     mario.setDir(1);
+    if (isJumping || isFalling) {
+      MarioRight.pause(); // stops gif whilst in the air.
+    } else {
+      MarioRight.play();
+    }
   }
 
-  if (keyCode === LEFT_ARROW) {
+  if (kb.pressing("left")) {
+    // console.log("left arrow pressed");
     mario.currentImg = "MarioLeft";
     mario.setDir(-1);
+    if (isJumping || isFalling) {
+      MarioLeft.pause(); // stops gif whilst in the air.
+    } else {
+      MarioLeft.play();
+    }
   }
 
-  if (keyCode === UP_ARROW) {
+  if (kb.pressing("space") && mario.y >= minHeight) {
+    //stops double jumping
     isJumping = true;
-    console.log("mario jumping");
+  }
+
+  if (kb.space >= 24) {
+    //controls the jumping height of mario
+    isJumping = false;
   }
 }
 

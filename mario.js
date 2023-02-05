@@ -31,7 +31,7 @@ class Mario {
   }
 
   move() {
-    this.x += this.xdir * 4;
+    this.x += this.xdir * 3;
   }
 
   setDir(dir) {
